@@ -2,8 +2,9 @@
 Created by my.
 
 # 1) Sensitive information / internal paths
-# What it does: blocks requests that try to access files or internal paths (configuration files, repos, admin panels).
-# Examples: "/.env", "/.git", "/etc/passwd", "/wp-admin"
+What it does: blocks requests that try to access files or internal paths (configuration files, repos, admin panels).
+Examples: "/.env", "/.git", "/etc/passwd", "/wp-admin"
+```bash
 (http.request.uri.path contains "..") or
 (http.request.uri.path contains "/.env") or
 (http.request.uri.path contains "/.git") or
@@ -21,10 +22,12 @@ Created by my.
 (lower(http.request.uri.path) contains "/etc/passwd") or
 (lower(http.request.uri.path) contains "/proc/self") or
 (lower(http.request.uri.path) contains "/cgi-bin/") or
+```
 
 # 2) Command execution / OS injection
-# What it does: detects attempts to execute system commands or use remote admin utilities.
-# Examples: "cmd.exe", "powershell", "system(...)"
+What it does: detects attempts to execute system commands or use remote admin utilities.
+Examples: "cmd.exe", "powershell", "system(...)"
+```bash
 (lower(http.request.uri.query) contains "cmd.exe") or
 (lower(http.request.uri.query) contains "powershell") or
 (lower(http.request.uri.query) contains "system(") or
@@ -41,10 +44,12 @@ Created by my.
 (lower(http.request.uri.query) contains "into%20outfile") or
 (lower(http.request.uri.query) contains "into%20dumpfile") or
 (lower(http.request.uri.query) contains "into+outfile") or
+```
 
 # 3) Cross-site scripting (XSS) and HTML/JS payloads
-# What it does: blocks parameters containing tags or attributes commonly used for XSS (script, img, iframe, onerror, document.cookie, etc.).
-# Examples: "<script>", "onerror=", "<iframe src=...>"
+What it does: blocks parameters containing tags or attributes commonly used for XSS (script, img, iframe, onerror, document.cookie, etc.).
+Examples: "<script>", "onerror=", "<iframe src=...>"
+```bash
 (lower(http.request.uri.query) contains "<script") or
 (lower(http.request.uri.query) contains "%3cscript") or
 (lower(http.request.uri.query) contains "</script") or
@@ -96,10 +101,12 @@ Created by my.
 (lower(http.request.uri.query) contains "expression(") or
 (lower(http.request.uri.query) contains "<?php") or
 (lower(http.request.uri.query) contains "%3c%3fphp") or
+```
 
 # 4) SQL injection and database enumeration
-# What it does: detects common SQLi patterns, functions and schema names that attempt to access sensitive data.
-# Examples: "union select", "or 1=1", "information_schema"
+What it does: detects common SQLi patterns, functions and schema names that attempt to access sensitive data.
+Examples: "union select", "or 1=1", "information_schema"
+```bash
 (lower(http.request.uri.query) contains "union%20select") or
 (lower(http.request.uri.query) contains "union+select") or
 (lower(http.request.uri.query) contains "union/**/select") or
@@ -145,9 +152,14 @@ Created by my.
 (lower(http.request.uri.query) contains "pg_user") or
 (lower(http.request.uri.query) contains "current_database(") or
 (lower(http.request.uri.query) contains "current_database%28") or
+(lower(http.request.uri.query) contains "current_user(") or
+(lower(http.request.uri.query) contains "current_user%28") or
+```
 
 # 5) Functions and patterns used in attacks (concatenation, file loading, SQL functions)
-# What it does: detects use of functions commonly found in SQL/OS payloads.
+What it does: detects use of functions commonly found in SQL/OS payloads.
+Examples: "concat(", "load_file(", "into outfile"
+```bash
 (lower(http.request.uri.query) contains "concat(") or
 (lower(http.request.uri.query) contains "concat%28") or
 (lower(http.request.uri.query) contains "group_concat(") or
@@ -160,27 +172,36 @@ Created by my.
 (lower(http.request.uri.query) contains "md5%28") or
 (lower(http.request.uri.query) contains "extractvalue(") or
 (lower(http.request.uri.query) contains "updatexml(") or
+```
 
 # 6) Binary/hex patterns and null bytes
-# What it does: detects attempts to inject null bytes, long hex strings or hex-encoded payloads.
+What it does: detects attempts to inject null bytes, long hex strings or hex-encoded payloads.
+```bash
 (http.request.uri.query contains "%00") or
 (http.request.uri.query contains "0x00") or
 (http.request.uri.query contains "0x3c62723e3c62723e3c62723e") or
 (http.request.uri.query contains "0x3c696d67207372633d22") or
+```
 
 # 7) Additional manually created rules
 # 7a) Block by User-Agent for scanning tools
-# What it does: detects known scanner/enum User-Agents.
+What it does: detects known scanner/enum User-Agents.
+```bash
 (lower(http.request.headers["user-agent"][0]) contains "sqlmap") or
 (lower(http.request.headers["user-agent"][0]) contains "masscan") or
 (lower(http.request.headers["user-agent"][0]) contains "nikto") or
 (lower(http.request.headers["user-agent"][0]) contains "acunetix") or
+```
 
 # 7b) Suspicious double extension (possible disguised webshell)
+```bash
 (http.request.uri.path contains ".php.") or
 (http.request.uri.path contains ".php5") or
 (http.request.uri.path contains ".phtml") or
+```
 
 # 7c) Long Base64-looking query (possible exfiltration or encoded payload)
-# Note: adjust threshold (200) according to legitimate traffic
+Note: adjust threshold (200) according to legitimate traffic
+```bash
 (strlen(http.request.uri.query) > 200 and http.request.uri.query matches "(?i)^[A-Za-z0-9+/=]+$")
+```
