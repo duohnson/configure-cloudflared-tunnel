@@ -4,7 +4,7 @@ This repository documents configurations and best practices for exposing a local
 
 Index
 -----
-- Cloudflared setup and examples: [cloudflared/README.md](cloudflared/README.md)
+- Cloudflared setup and examples: [cloudflared/configuration.md](cloudflared/configuration.md)
 - Quick setup summary: `cloudflared-setup.txt`
 - Firewall rules documentation: [firewalls/rules.md](firewalls/rules.md)
 - Firewall summary: `firewalls/rules.txt`
