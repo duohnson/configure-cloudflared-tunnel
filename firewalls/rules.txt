@@ -1,0 +1,13 @@
+Firewall Rules Summary
+
+This file links to the detailed rules documentation: see `firewalls/rules.md`.
+
+Summary of main rules (inspired by SocolSRT):
+- Bad Bot — Block: blocks known malicious user agents, Tor, suspicious ports, old HTTP versions, invalid methods, bad X-Forwarded-For, scraping ASNs, and non-standard cookies.
+- Exploiting Fix — Block: blocks SQLi, XSS patterns, and common PHP exploitation signatures.
+- Method Fix (Optional) — Block: blocks unusual HTTP methods used in attacks.
+- Threat Check (Optional) — Challenge: challenges requests with old HTTP versions, non-TLS requests, or missing referer.
+
+For full details and screenshots, open `firewalls/rules.md`.
+
+Credit: SocolSRT

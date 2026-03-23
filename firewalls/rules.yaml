@@ -1,0 +1,35 @@
+# Firewall rules YAML examples
+
+rules:
+  - name: "Bad Bot - Action: Block"
+    action: block
+    description: "Block known bad user agents, Tor, suspicious ports, old HTTP versions, invalid methods, suspicious X-Forwarded-For, scraping ASNs, non-standard cookies."
+    expressions:
+      - "(http.user_agent contains \"BadBotSignature\")"
+      - "(ip.geoip.asnum in {12345, 67890}) # scraping ASNs placeholder"
+      - "(http.request.method not in {\"GET\",\"POST\",\"PUT\",\"DELETE\",\"HEAD\",\"OPTIONS\"})"
+      - "(not http.request.version >= \"HTTP/1.1\")"
+      - "(ip.geoip.is_tor)"
+
+  - name: "Exploiting Fix - Action: Block"
+    action: block
+    description: "Block SQLi, XSS, and common PHP exploitation patterns."
+    expressions:
+      - "(http.request.uri.query contains \"UNION+SELECT\")"
+      - "(http.request.uri.query contains \"<script>\")"
+      - "(http.request.body contains \"base64_decode\")"
+
+  - name: "Method Fix (Optional) - Action: Block"
+    action: block
+    description: "Block unusual HTTP methods used in attacks."
+    expressions:
+      - "(http.request.method in {\"PROPFIND\",\"TRACK\",\"TRACE\",\"CONNECT\"})"
+
+  - name: "Threat Check (Optional) - Action: Challenge"
+    action: challenge
+    description: "Challenge requests based on old HTTP versions, non-TLS requests, or missing Referer."
+    expressions:
+      - "(not tls)"
+      - "(cf.http_version in {\"HTTP/1.0\",\"HTTP/1.1\"})"
+      - "(not http.request.headers.referer)"
+

@@ -1,0 +1,11 @@
+Cloudflared Quick Setup Summary
+
+1. Install `cloudflared` on your Linux machine.
+2. Run `cloudflared tunnel login` to authenticate and obtain `cert.pem`.
+3. Create a tunnel: `cloudflared tunnel create my-tunnel` (note `TUNNEL_ID`).
+4. Create DNS route: `cloudflared tunnel route dns my-tunnel yourdomain.com`.
+5. Create `/etc/cloudflared/config.yml` (see `cloudflared/configuracion.md` for details).
+6. Copy credentials to `/etc/cloudflared/TUNNEL_ID.json` and secure permissions.
+7. Run as service: `sudo cloudflared service install` or `sudo systemctl enable --now cloudflared@my-tunnel`.
+
+See `cloudflared/configuracion.md` for step-by-step instructions and screenshots placeholders.

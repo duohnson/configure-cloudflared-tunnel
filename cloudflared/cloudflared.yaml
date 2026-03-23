@@ -1,0 +1,13 @@
+## Example Cloudflared configuration
+
+# Replace TUNNEL_ID and hostname values before use
+tunnel: TUNNEL_ID
+credentials-file: /etc/cloudflared/TUNNEL_ID.json
+ingress:
+  - hostname: yourdomain.com
+    service: http://localhost:3000 #or you port
+  - service: http_status: 404
+
+# Optional: metrics and logging
+metrics: 0.0.0.0:49510
+loglevel: info
